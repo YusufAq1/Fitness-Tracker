@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Overload">
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="apple-touch-icon" href="sport-shoes (1).png">
   <title>Overload</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap"
@@ -27,6 +27,7 @@
       --danger: #c45040;
       --up: #6c584c;
       --down: #c45040;
+      --logo-filter: invert(33%) sepia(12%) saturate(1000%) hue-rotate(340deg) brightness(95%) contrast(88%);
     }
 
     * {
@@ -66,6 +67,7 @@
     .logo-icon {
       width: 34px;
       height: 34px;
+      filter: var(--logo-filter);
     }
 
     .header-date {

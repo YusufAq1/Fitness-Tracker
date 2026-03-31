@@ -2,7 +2,8 @@ const CACHE = 'overload-v3';
 const ASSETS = [
   '/index.html',
   '/manifest.json',
-  '/logo.png'
+  '/logo.png',
+  '/sport-shoes (1).png'
 ];
 
 // Install: cache all core files
