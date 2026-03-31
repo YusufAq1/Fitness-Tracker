@@ -1,4 +1,4 @@
-const CACHE = 'overload-v1';
+const CACHE = 'overload-v2';
 const ASSETS = [
   '/index.html',
   '/manifest.json',
@@ -24,9 +24,33 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// Fetch: serve from cache, fall back to network
+// Fetch: network-first for HTML (always get latest), cache-first for other assets
 self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+
+  // Navigation requests & index.html: try network first, fall back to cache
+  if (e.request.mode === 'navigate' || url.pathname === '/index.html') {
+    e.respondWith(
+      fetch(e.request)
+        .then(response => {
+          const clone = response.clone();
+          caches.open(CACHE).then(cache => cache.put(e.request, clone));
+          return response;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
+  // Other assets: cache-first, fall back to network (and cache the result)
   e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(response => {
+        const clone = response.clone();
+        caches.open(CACHE).then(cache => cache.put(e.request, clone));
+        return response;
+      });
+    })
   );
 });

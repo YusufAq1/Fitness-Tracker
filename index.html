@@ -536,6 +536,45 @@
     color: #0e0e0f;
   }
 
+  /* DATA MANAGEMENT */
+  .data-section {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .data-section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .data-btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 8px;
+  }
+  .data-btn-export {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .data-btn-export:hover { border-color: var(--accent); color: var(--accent); }
+  .data-btn-import {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .data-btn-import:hover { border-color: var(--accent); color: var(--accent); }
+
   /* CONFIRM MODAL */
   .modal-confirm-msg {
     font-family: 'DM Sans', sans-serif;
@@ -589,6 +628,12 @@
   </div>
   <div id="daysList"></div>
   <button class="add-day-btn" onclick="openAddDay()">+ ADD WORKOUT DAY</button>
+  <div class="data-section">
+    <div class="data-section-title">YOUR DATA</div>
+    <button class="data-btn data-btn-export" onclick="exportData()">↓ EXPORT BACKUP</button>
+    <button class="data-btn data-btn-import" onclick="document.getElementById('importFile').click()">↑ IMPORT BACKUP</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)" />
+  </div>
 </div>
 
 <!-- LOG EXERCISE VIEW (slides in over workouts) -->
@@ -1047,6 +1092,47 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2200);
 }
 
+// ─── EXPORT / IMPORT ──────────────────────────────────
+function exportData() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'overload-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('BACKUP EXPORTED');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported.days || !Array.isArray(imported.days)) {
+        showToast('INVALID BACKUP FILE');
+        return;
+      }
+      document.getElementById('confirmTitle').textContent = 'IMPORT DATA';
+      document.getElementById('confirmMsg').textContent = 'This will replace all your current data with the backup. Continue?';
+      document.getElementById('confirmAction').textContent = 'IMPORT';
+      confirmCallback = () => {
+        data = imported;
+        save(); renderDays(); closeModal('confirmModal');
+        document.getElementById('confirmAction').textContent = 'DELETE';
+        showToast('DATA RESTORED');
+      };
+      document.getElementById('confirmModal').classList.add('open');
+    } catch (err) {
+      showToast('INVALID BACKUP FILE');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
 // ─── INIT ─────────────────────────────────────────────
 renderDays();
 </script>
@@ -1054,8 +1140,20 @@ renderDays();
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => {
+        // Check for updates every 30 minutes while the app is open
+        setInterval(() => reg.update(), 30 * 60 * 1000);
+        reg.addEventListener('updatefound', () => {
+          const newSW = reg.installing;
+          newSW.addEventListener('statechange', () => {
+            if (newSW.state === 'activated') {
+              showToast('APP UPDATED — RELOADING');
+              setTimeout(() => location.reload(), 1500);
+            }
+          });
+        });
+      })
       .catch(err => console.log('SW failed:', err));
   });
 }
