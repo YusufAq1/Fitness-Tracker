@@ -50,6 +50,14 @@
     font-size: 36px;
     letter-spacing: 3px;
     color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    filter: invert(34%) sepia(10%) saturate(1100%) hue-rotate(340deg) brightness(90%) contrast(90%);
   }
   .header-date {
     font-family: 'DM Mono', monospace;
@@ -612,7 +620,10 @@
 <body>
 
 <div class="header">
-  <div class="logo">OVERLOAD</div>
+  <div class="logo">
+    <img class="logo-icon" src="logo.png" alt="Overload logo" />
+    OVERLOAD
+  </div>
   <div class="header-date" id="headerDate"></div>
 </div>
 
