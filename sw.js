@@ -1,9 +1,12 @@
-const CACHE = 'overload-v3';
+const CACHE = 'overload-v5';
 const ASSETS = [
   '/index.html',
+  '/styles.css',
+  '/app.js',
   '/manifest.json',
   '/logo.png',
-  '/sport-shoes (1).png'
+  '/icon-192.png',
+  '/icon-512.png'
 ];
 
 // Install: cache all core files
@@ -24,33 +27,15 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// Fetch: network-first for HTML (always get latest), cache-first for other assets
+// Fetch: network-first for everything, fall back to cache for offline use
 self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
-
-  // Navigation requests & index.html: try network first, fall back to cache
-  if (e.request.mode === 'navigate' || url.pathname === '/index.html') {
-    e.respondWith(
-      fetch(e.request)
-        .then(response => {
-          const clone = response.clone();
-          caches.open(CACHE).then(cache => cache.put(e.request, clone));
-          return response;
-        })
-        .catch(() => caches.match(e.request))
-    );
-    return;
-  }
-
-  // Other assets: cache-first, fall back to network (and cache the result)
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      if (cached) return cached;
-      return fetch(e.request).then(response => {
+    fetch(e.request)
+      .then(response => {
         const clone = response.clone();
         caches.open(CACHE).then(cache => cache.put(e.request, clone));
         return response;
-      });
-    })
+      })
+      .catch(() => caches.match(e.request))
   );
 });
