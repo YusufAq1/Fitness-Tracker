@@ -32,8 +32,10 @@ function showTab(tab) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
-  document.querySelectorAll('.nav-btn')[tab === 'workouts' ? 0 : 1].classList.add('active');
+  const tabIndex = { workouts: 0, history: 1, records: 2 };
+  document.querySelectorAll('.nav-btn')[tabIndex[tab]].classList.add('active');
   if (tab === 'history') renderHistory();
+  if (tab === 'records') renderRecords();
 }
 
 function goBack() {
@@ -56,27 +58,21 @@ function renderDays() {
         const unit = s.unit || 'kg';
         return `${s.kg}${unit}×${s.reps}`;
       }).join(' · ') : '—';
-      return `<div class="exercise-row">
-        <div onclick="openLog('${day.id}','${ex.id}','${esc(ex.name)}','${esc(day.name)}')" style="flex:1">
+      return `<div class="exercise-row" data-long-press="exercise" data-day-id="${day.id}" data-ex-id="${ex.id}" data-ex-name="${esc(ex.name)}" onclick="openLog('${day.id}','${ex.id}','${esc(ex.name)}','${esc(day.name)}')">
+        <div style="flex:1">
           <div class="exercise-name">${ex.name}</div>
           <div class="exercise-last">${lastStr}</div>
         </div>
-        <div class="ex-right">
-          <button class="ex-action-btn" onclick="event.stopPropagation();openEditExercise('${day.id}','${ex.id}')" title="Rename">✎</button>
-          <button class="ex-action-btn delete" onclick="event.stopPropagation();deleteExercise('${day.id}','${ex.id}','${esc(ex.name)}')" title="Delete">✕</button>
-          <span class="ex-arrow" onclick="openLog('${day.id}','${ex.id}','${esc(ex.name)}','${esc(day.name)}')">→</span>
-        </div>
+        <span class="ex-arrow">→</span>
       </div>`;
     }).join('');
     return `<div class="day-card" id="dc-${day.id}">
-      <div class="day-header" onclick="toggleDay('${day.id}')">
+      <div class="day-header" data-long-press="day" data-day-id="${day.id}" data-day-name="${esc(day.name)}" onclick="toggleDay('${day.id}')">
         <div>
           <div class="day-name">${day.name}</div>
           <div class="day-meta">${day.exercises.length} EXERCISE${day.exercises.length !== 1 ? 'S' : ''}</div>
         </div>
         <div class="day-header-right">
-          <button class="day-action-btn" onclick="event.stopPropagation();openEditDay('${day.id}')" title="Rename">✎</button>
-          <button class="day-action-btn delete" onclick="event.stopPropagation();deleteDay('${day.id}','${esc(day.name)}')" title="Delete">✕</button>
           <span class="day-chevron">▾</span>
         </div>
       </div>
@@ -294,8 +290,37 @@ function setUnit(unit) {
   document.getElementById('weightHeader').textContent = unit.toUpperCase();
 }
 
+// ─── PERSONAL RECORDS ─────────────────────────────────
+function getPersonalRecords() {
+  const prs = {};
+  // Sort logs oldest-first to find the first time each max was set
+  const sorted = [...data.logs].sort((a, b) => a.date - b.date);
+  sorted.forEach(log => {
+    const maxWeight = Math.max(...log.sets.map(s => s.kg));
+    const bestSet = log.sets.reduce((best, s) => s.kg > best.kg || (s.kg === best.kg && s.reps > best.reps) ? s : best);
+    if (!prs[log.exerciseId] || maxWeight > prs[log.exerciseId].weight) {
+      prs[log.exerciseId] = {
+        exerciseName: log.exerciseName,
+        weight: maxWeight,
+        reps: bestSet.reps,
+        unit: bestSet.unit || 'kg',
+        date: log.date,
+        logId: log.id
+      };
+    }
+  });
+  return prs;
+}
+
+function isPersonalRecord(log, prs) {
+  const pr = prs[log.exerciseId];
+  return pr && pr.logId === log.id;
+}
+
 // ─── HISTORY ──────────────────────────────────────────
 function renderHistory() {
+  const prs = getPersonalRecords();
+
   // Build filter chips
   const names = ['ALL', ...new Set(data.logs.map(l => l.exerciseName))];
   const filterEl = document.getElementById('historyFilter');
@@ -318,8 +343,9 @@ function renderHistory() {
     const prevReps = prev ? prev.sets.reduce((a, s) => a + s.reps, 0) : null;
     const diff = prevMaxKg !== null ? maxKg - prevMaxKg : null;
     const repsDiff = prevReps !== null ? totalReps - prevReps : null;
-    const chips = log.sets.map((s, i) => `<span class="history-set-chip">${s.kg}${s.unit || 'kg'} × ${s.reps}</span>`).join('');
+    const chips = log.sets.map(s => `<span class="history-set-chip">${s.kg}${s.unit || 'kg'} × ${s.reps}</span>`).join('');
     const pct = prevMaxKg ? Math.min(100, Math.round((maxKg / (prevMaxKg * 1.5)) * 100)) : 50;
+    const isPR = isPersonalRecord(log, prs);
 
     let progressHTML = '';
     if (prev) {
@@ -333,7 +359,9 @@ function renderHistory() {
     }
 
     return `<div class="history-entry">
-      <div class="history-ex-name">${log.exerciseName}</div>
+      <div class="history-ex-name-row">
+        <div class="history-ex-name">${log.exerciseName}</div>${isPR ? '<span class="pr-badge">PR</span>' : ''}
+      </div>
       <div class="history-meta">${log.dayName.toUpperCase()} · ${formatDate(log.date).toUpperCase()}</div>
       <div class="history-sets">${chips}</div>
       ${progressHTML}
@@ -350,6 +378,34 @@ function getPrevLog(exId, beforeDate) {
 function setFilter(name) {
   historyFilter = name;
   renderHistory();
+}
+
+// ─── RECORDS ──────────────────────────────────────────
+function renderRecords() {
+  const prs = getPersonalRecords();
+  const prValues = Object.values(prs);
+  const listEl = document.getElementById('recordsList');
+
+  if (!prValues.length) {
+    listEl.innerHTML = '<div class="empty-state"><div class="empty-icon">🏆</div>NO RECORDS YET<br>LOG A SESSION TO SET YOUR FIRST PR</div>';
+    return;
+  }
+
+  // Sort alphabetically by exercise name
+  prValues.sort((a, b) => a.exerciseName.localeCompare(b.exerciseName));
+
+  listEl.innerHTML = prValues.map(p => {
+    const totalSessions = data.logs.filter(l => l.exerciseName === p.exerciseName).length;
+
+    return `<div class="record-card">
+      <div class="record-header">
+        <div class="record-name">${p.exerciseName}</div>
+        <div class="record-sessions">${totalSessions} SESSION${totalSessions !== 1 ? 'S' : ''}</div>
+      </div>
+      <div class="record-value">${p.weight}${p.unit} × ${p.reps}</div>
+      <div class="record-date">SET ON ${formatDate(p.date).toUpperCase()}</div>
+    </div>`;
+  }).join('');
 }
 
 // ─── TOAST ────────────────────────────────────────────
@@ -400,6 +456,102 @@ function importData(event) {
   reader.readAsText(file);
   event.target.value = '';
 }
+
+// ─── LONG-PRESS CONTEXT MENU ──────────────────────────
+const contextMenu = document.getElementById('contextMenu');
+const contextOverlay = document.getElementById('contextOverlay');
+const ctxRename = document.getElementById('ctxRename');
+const ctxDelete = document.getElementById('ctxDelete');
+let longPressTimer = null;
+let longPressTriggered = false;
+let ctxRenameAction = null;
+let ctxDeleteAction = null;
+
+function openContextMenu(x, y, renameAction, deleteAction) {
+  ctxRenameAction = renameAction;
+  ctxDeleteAction = deleteAction;
+
+  contextMenu.style.left = Math.min(x, window.innerWidth - 180) + 'px';
+  contextMenu.style.top = Math.min(y, window.innerHeight - 100) + 'px';
+  contextMenu.classList.add('open');
+  contextOverlay.classList.add('open');
+}
+
+function closeContextMenu() {
+  contextMenu.classList.remove('open');
+  contextOverlay.classList.remove('open');
+  ctxRenameAction = null;
+  ctxDeleteAction = null;
+}
+
+ctxRename.addEventListener('click', () => {
+  if (ctxRenameAction) ctxRenameAction();
+  closeContextMenu();
+});
+
+ctxDelete.addEventListener('click', () => {
+  if (ctxDeleteAction) ctxDeleteAction();
+  closeContextMenu();
+});
+
+contextOverlay.addEventListener('click', closeContextMenu);
+
+function handlePressStart(e) {
+  const target = e.target.closest('[data-long-press]');
+  if (!target) return;
+
+  longPressTriggered = false;
+  const touch = e.touches ? e.touches[0] : e;
+  const px = touch.clientX;
+  const py = touch.clientY;
+
+  longPressTimer = setTimeout(() => {
+    longPressTriggered = true;
+    if (navigator.vibrate) navigator.vibrate(30);
+
+    const type = target.dataset.longPress;
+    if (type === 'day') {
+      const dayId = target.dataset.dayId;
+      const dayName = target.dataset.dayName;
+      openContextMenu(px, py,
+        () => openEditDay(dayId),
+        () => deleteDay(dayId, dayName)
+      );
+    } else if (type === 'exercise') {
+      const dayId = target.dataset.dayId;
+      const exId = target.dataset.exId;
+      const exName = target.dataset.exName;
+      openContextMenu(px, py,
+        () => openEditExercise(dayId, exId),
+        () => deleteExercise(dayId, exId, exName)
+      );
+    }
+  }, 500);
+}
+
+function handlePressEnd(e) {
+  clearTimeout(longPressTimer);
+  if (longPressTriggered) {
+    e.preventDefault();
+    longPressTriggered = false;
+  }
+}
+
+function handlePressMove() {
+  clearTimeout(longPressTimer);
+}
+
+document.addEventListener('touchstart', handlePressStart, { passive: true });
+document.addEventListener('touchend', handlePressEnd);
+document.addEventListener('touchmove', handlePressMove, { passive: true });
+document.addEventListener('mousedown', handlePressStart);
+document.addEventListener('mouseup', handlePressEnd);
+document.addEventListener('mousemove', handlePressMove);
+
+// Prevent default context menu on long-press targets
+document.addEventListener('contextmenu', e => {
+  if (e.target.closest('[data-long-press]')) e.preventDefault();
+});
 
 // ─── INIT ─────────────────────────────────────────────
 renderDays();
