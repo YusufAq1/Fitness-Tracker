@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(mkdir -p src/state src/utils src/ui src/features public)",
+      "Bash(mv logo.png icon-192.png icon-512.png manifest.json public/)",
+      "Bash(mv sw.js public/)",
+      "Bash(npx vite:*)",
+      "Bash(npx eslint:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx vitest:*)",
+      "Bash(where gh:*)"
+    ]
+  }
+}
