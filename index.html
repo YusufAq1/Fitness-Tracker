@@ -14,7 +14,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/styles.css">
 </head>
 
 <body>
@@ -27,36 +27,35 @@
     <div class="header-date" id="headerDate"></div>
   </div>
 
-  <nav class="nav">
-    <button class="nav-btn active" onclick="showTab('workouts')">WORKOUTS</button>
-    <button class="nav-btn" onclick="showTab('history')">HISTORY</button>
-    <button class="nav-btn" onclick="showTab('records')">RECORDS</button>
+  <nav class="nav" role="tablist" aria-label="Main navigation">
+    <button class="nav-btn active" role="tab" aria-selected="true" aria-controls="tab-workouts">WORKOUTS</button>
+    <button class="nav-btn" role="tab" aria-selected="false" aria-controls="tab-history">HISTORY</button>
+    <button class="nav-btn" role="tab" aria-selected="false" aria-controls="tab-records">RECORDS</button>
   </nav>
 
   <!-- WORKOUTS TAB -->
-  <div class="view active" id="tab-workouts">
+  <div class="view active" id="tab-workouts" role="tabpanel">
     <div class="days-header">
       <div class="section-title">YOUR DAYS</div>
     </div>
     <div id="daysList"></div>
-    <button class="add-day-btn" onclick="openAddDay()">+ ADD WORKOUT DAY</button>
+    <button class="add-day-btn" data-action-global="add-day">+ ADD WORKOUT DAY</button>
     <div class="data-section">
       <div class="data-section-title">YOUR DATA</div>
-      <button class="data-btn data-btn-export" onclick="exportData()">↓ EXPORT BACKUP</button>
-      <button class="data-btn data-btn-import" onclick="document.getElementById('importFile').click()">↑ IMPORT
-        BACKUP</button>
-      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)" />
+      <button class="data-btn data-btn-export" data-action-global="export">↓ EXPORT BACKUP</button>
+      <button class="data-btn data-btn-import" data-action-global="import-trigger">↑ IMPORT BACKUP</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" aria-label="Import backup file" />
     </div>
   </div>
 
-  <!-- LOG EXERCISE VIEW (slides in over workouts) -->
-  <div class="view" id="tab-log">
-    <button class="back-btn" onclick="goBack()">← BACK</button>
+  <!-- LOG EXERCISE VIEW -->
+  <div class="view" id="tab-log" role="tabpanel">
+    <button class="back-btn" data-action-global="go-back" aria-label="Go back">← BACK</button>
     <div class="log-exercise-title" id="logExName"></div>
     <div class="log-day-label" id="logDayLabel"></div>
-    <div class="unit-toggle">
-      <button class="unit-btn active" id="unitKg" onclick="setUnit('kg')">KG</button>
-      <button class="unit-btn" id="unitLbs" onclick="setUnit('lbs')">LBS</button>
+    <div class="unit-toggle" role="radiogroup" aria-label="Weight unit">
+      <button class="unit-btn active" id="unitKg" role="radio" aria-checked="true">KG</button>
+      <button class="unit-btn" id="unitLbs" role="radio" aria-checked="false">LBS</button>
     </div>
     <table class="sets-table">
       <thead>
@@ -64,98 +63,98 @@
           <th style="width:30px">SET</th>
           <th id="weightHeader">KG</th>
           <th style="padding-left:8px">REPS</th>
-          <th></th>
+          <th><span class="sr-only">Delete</span></th>
         </tr>
       </thead>
       <tbody id="setsBody"></tbody>
     </table>
-    <button class="add-set-btn" onclick="addSet()">+ ADD SET</button>
-    <button class="save-btn" id="saveLogBtn" onclick="saveLog()">SAVE SESSION</button>
+    <button class="add-set-btn" data-action-global="add-set">+ ADD SET</button>
+    <button class="save-btn" id="saveLogBtn">SAVE SESSION</button>
   </div>
 
   <!-- HISTORY TAB -->
-  <div class="view" id="tab-history">
+  <div class="view" id="tab-history" role="tabpanel">
     <div class="section-title" style="margin-bottom:16px">PROGRESS LOG</div>
     <div class="history-filter" id="historyFilter"></div>
     <div id="historyList"></div>
   </div>
 
   <!-- RECORDS TAB -->
-  <div class="view" id="tab-records">
+  <div class="view" id="tab-records" role="tabpanel">
     <div class="section-title" style="margin-bottom:16px">PERSONAL BESTS</div>
     <div id="recordsList"></div>
   </div>
 
   <!-- ADD DAY MODAL -->
-  <div class="modal-overlay" id="addDayModal">
+  <div class="modal-overlay" id="addDayModal" role="dialog" aria-modal="true" aria-labelledby="addDayModalTitle">
     <div class="modal">
-      <div class="modal-title">NEW WORKOUT DAY</div>
-      <input class="modal-input" id="dayNameInput" placeholder="e.g. Day A — Push" maxlength="30" />
+      <div class="modal-title" id="addDayModalTitle">NEW WORKOUT DAY</div>
+      <input class="modal-input" id="dayNameInput" placeholder="e.g. Day A — Push" maxlength="30" aria-label="Day name" />
       <div class="modal-actions">
-        <button class="modal-cancel" onclick="closeModal('addDayModal')">CANCEL</button>
-        <button class="modal-confirm" onclick="confirmAddDay()">ADD</button>
+        <button class="modal-cancel" data-close="addDayModal">CANCEL</button>
+        <button class="modal-confirm" id="confirmAddDayBtn">ADD</button>
       </div>
     </div>
   </div>
 
   <!-- ADD EXERCISE MODAL -->
-  <div class="modal-overlay" id="addExModal">
+  <div class="modal-overlay" id="addExModal" role="dialog" aria-modal="true" aria-labelledby="addExModalTitle">
     <div class="modal">
-      <div class="modal-title">ADD EXERCISE</div>
-      <input class="modal-input" id="exNameInput" placeholder="e.g. Bench Press" maxlength="40" />
+      <div class="modal-title" id="addExModalTitle">ADD EXERCISE</div>
+      <input class="modal-input" id="exNameInput" placeholder="e.g. Bench Press" maxlength="40" aria-label="Exercise name" />
       <div class="modal-actions">
-        <button class="modal-cancel" onclick="closeModal('addExModal')">CANCEL</button>
-        <button class="modal-confirm" onclick="confirmAddExercise()">ADD</button>
+        <button class="modal-cancel" data-close="addExModal">CANCEL</button>
+        <button class="modal-confirm" id="confirmAddExBtn">ADD</button>
       </div>
     </div>
   </div>
 
   <!-- EDIT DAY MODAL -->
-  <div class="modal-overlay" id="editDayModal">
+  <div class="modal-overlay" id="editDayModal" role="dialog" aria-modal="true" aria-labelledby="editDayModalTitle">
     <div class="modal">
-      <div class="modal-title">RENAME DAY</div>
-      <input class="modal-input" id="editDayNameInput" placeholder="e.g. Day A — Push" maxlength="30" />
+      <div class="modal-title" id="editDayModalTitle">RENAME DAY</div>
+      <input class="modal-input" id="editDayNameInput" placeholder="e.g. Day A — Push" maxlength="30" aria-label="New day name" />
       <div class="modal-actions">
-        <button class="modal-cancel" onclick="closeModal('editDayModal')">CANCEL</button>
-        <button class="modal-confirm" onclick="confirmEditDay()">SAVE</button>
+        <button class="modal-cancel" data-close="editDayModal">CANCEL</button>
+        <button class="modal-confirm" id="confirmEditDayBtn">SAVE</button>
       </div>
     </div>
   </div>
 
   <!-- EDIT EXERCISE MODAL -->
-  <div class="modal-overlay" id="editExModal">
+  <div class="modal-overlay" id="editExModal" role="dialog" aria-modal="true" aria-labelledby="editExModalTitle">
     <div class="modal">
-      <div class="modal-title">RENAME EXERCISE</div>
-      <input class="modal-input" id="editExNameInput" placeholder="e.g. Bench Press" maxlength="40" />
+      <div class="modal-title" id="editExModalTitle">RENAME EXERCISE</div>
+      <input class="modal-input" id="editExNameInput" placeholder="e.g. Bench Press" maxlength="40" aria-label="New exercise name" />
       <div class="modal-actions">
-        <button class="modal-cancel" onclick="closeModal('editExModal')">CANCEL</button>
-        <button class="modal-confirm" onclick="confirmEditExercise()">SAVE</button>
+        <button class="modal-cancel" data-close="editExModal">CANCEL</button>
+        <button class="modal-confirm" id="confirmEditExBtn">SAVE</button>
       </div>
     </div>
   </div>
 
   <!-- CONFIRM DELETE MODAL -->
-  <div class="modal-overlay" id="confirmModal">
+  <div class="modal-overlay" id="confirmModal" role="alertdialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMsg">
     <div class="modal">
       <div class="modal-title" id="confirmTitle">CONFIRM</div>
       <div class="modal-confirm-msg" id="confirmMsg"></div>
       <div class="modal-actions">
-        <button class="modal-cancel" onclick="closeModal('confirmModal')">CANCEL</button>
-        <button class="modal-confirm modal-danger" id="confirmAction" onclick="executeConfirm()">DELETE</button>
+        <button class="modal-cancel" data-close="confirmModal">CANCEL</button>
+        <button class="modal-confirm modal-danger" id="confirmAction">DELETE</button>
       </div>
     </div>
   </div>
 
   <!-- LONG-PRESS CONTEXT MENU -->
-  <div class="context-menu" id="contextMenu">
-    <button class="context-menu-btn" id="ctxRename">✎ RENAME</button>
-    <button class="context-menu-btn danger" id="ctxDelete">✕ DELETE</button>
+  <div class="context-menu" id="contextMenu" role="menu">
+    <button class="context-menu-btn" id="ctxRename" role="menuitem">✎ RENAME</button>
+    <button class="context-menu-btn danger" id="ctxDelete" role="menuitem">✕ DELETE</button>
   </div>
   <div class="context-overlay" id="contextOverlay"></div>
 
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <script src="app.js"></script>
+  <script type="module" src="/src/main.js"></script>
 </body>
 
 </html>
