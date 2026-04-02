@@ -18,6 +18,8 @@ let editExDayId = null;
 let editExId = null;
 let confirmCallback = null;
 let currentUnit = 'kg';
+let editingLogId = null;
+let logReturnTab = 'workouts';
 
 function save() { localStorage.setItem('overload_data', JSON.stringify(data)); }
 
@@ -39,9 +41,14 @@ function showTab(tab) {
 }
 
 function goBack() {
+  editingLogId = null;
   document.getElementById('tab-log').classList.remove('active');
-  document.getElementById('tab-workouts').classList.add('active');
-  document.querySelectorAll('.nav-btn')[0].classList.add('active');
+  document.getElementById('tab-' + logReturnTab).classList.add('active');
+  const tabIndex = { workouts: 0, history: 1, records: 2 };
+  document.querySelectorAll('.nav-btn')[tabIndex[logReturnTab]].classList.add('active');
+  if (logReturnTab === 'history') renderHistory();
+  if (logReturnTab === 'records') renderRecords();
+  logReturnTab = 'workouts';
 }
 
 // ─── WORKOUTS ─────────────────────────────────────────
@@ -97,6 +104,8 @@ function getLastLog(exId) {
 
 // ─── LOG EXERCISE ──────────────────────────────────────
 function openLog(dayId, exId, exName, dayName) {
+  editingLogId = null;
+  logReturnTab = 'workouts';
   currentDayId = dayId; currentExId = exId;
   currentExName = exName; currentDayName = dayName;
   document.getElementById('logExName').textContent = exName;
@@ -106,6 +115,7 @@ function openLog(dayId, exId, exName, dayName) {
   const unit = last && last.sets[0] && last.sets[0].unit ? last.sets[0].unit : 'kg';
   setUnit(unit);
   renderSets(sets);
+  document.getElementById('saveLogBtn').textContent = 'SAVE SESSION';
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById('tab-log').classList.add('active');
@@ -158,17 +168,30 @@ function saveLog() {
     }
   });
   if (!sets.length) { showToast('ADD AT LEAST ONE SET'); return; }
-  data.logs.push({
-    id: Date.now() + '',
-    exerciseId: currentExId,
-    exerciseName: currentExName,
-    dayName: currentDayName,
-    date: Date.now(),
-    sets
-  });
-  save();
-  renderDays();
-  showToast('SESSION SAVED ✓');
+
+  if (editingLogId) {
+    const log = data.logs.find(l => l.id === editingLogId);
+    if (log) {
+      log.sets = sets;
+      log.exerciseName = currentExName;
+      log.dayName = currentDayName;
+    }
+    save();
+    renderDays();
+    showToast('SESSION UPDATED ✓');
+  } else {
+    data.logs.push({
+      id: Date.now() + '',
+      exerciseId: currentExId,
+      exerciseName: currentExName,
+      dayName: currentDayName,
+      date: Date.now(),
+      sets
+    });
+    save();
+    renderDays();
+    showToast('SESSION SAVED ✓');
+  }
   goBack();
 }
 
@@ -358,7 +381,7 @@ function renderHistory() {
       </div>`;
     }
 
-    return `<div class="history-entry">
+    return `<div class="history-entry" data-long-press="session" data-log-id="${log.id}" data-ex-name="${esc(log.exerciseName)}">
       <div class="history-ex-name-row">
         <div class="history-ex-name">${log.exerciseName}</div>${isPR ? '<span class="pr-badge">PR</span>' : ''}
       </div>
@@ -406,6 +429,37 @@ function renderRecords() {
       <div class="record-date">SET ON ${formatDate(p.date).toUpperCase()}</div>
     </div>`;
   }).join('');
+}
+
+// ─── EDIT / DELETE SESSION ─────────────────────────────
+function editSession(logId) {
+  const log = data.logs.find(l => l.id === logId);
+  if (!log) return;
+  editingLogId = logId;
+  logReturnTab = 'history';
+  currentExId = log.exerciseId;
+  currentExName = log.exerciseName;
+  currentDayName = log.dayName;
+  document.getElementById('logExName').textContent = log.exerciseName;
+  document.getElementById('logDayLabel').textContent = log.dayName.toUpperCase() + ' · ' + formatDate(log.date).toUpperCase();
+  const unit = log.sets[0] && log.sets[0].unit ? log.sets[0].unit : 'kg';
+  setUnit(unit);
+  renderSets(log.sets.map(s => ({ ...s })));
+  document.getElementById('saveLogBtn').textContent = 'UPDATE SESSION';
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('tab-log').classList.add('active');
+}
+
+function deleteSession(logId, exerciseName) {
+  document.getElementById('confirmTitle').textContent = 'DELETE SESSION';
+  document.getElementById('confirmMsg').textContent = `Delete this ${exerciseName} session? This cannot be undone.`;
+  confirmCallback = () => {
+    data.logs = data.logs.filter(l => l.id !== logId);
+    save(); renderHistory(); closeModal('confirmModal');
+    showToast('SESSION DELETED');
+  };
+  document.getElementById('confirmModal').classList.add('open');
 }
 
 // ─── TOAST ────────────────────────────────────────────
@@ -467,9 +521,10 @@ let longPressTriggered = false;
 let ctxRenameAction = null;
 let ctxDeleteAction = null;
 
-function openContextMenu(x, y, renameAction, deleteAction) {
+function openContextMenu(x, y, renameAction, deleteAction, renameLabel) {
   ctxRenameAction = renameAction;
   ctxDeleteAction = deleteAction;
+  ctxRename.textContent = renameLabel || '✎ RENAME';
 
   contextMenu.style.left = Math.min(x, window.innerWidth - 180) + 'px';
   contextMenu.style.top = Math.min(y, window.innerHeight - 100) + 'px';
@@ -524,6 +579,14 @@ function handlePressStart(e) {
       openContextMenu(px, py,
         () => openEditExercise(dayId, exId),
         () => deleteExercise(dayId, exId, exName)
+      );
+    } else if (type === 'session') {
+      const logId = target.dataset.logId;
+      const exName = target.dataset.exName;
+      openContextMenu(px, py,
+        () => editSession(logId),
+        () => deleteSession(logId, exName),
+        '✎ EDIT'
       );
     }
   }, 500);
