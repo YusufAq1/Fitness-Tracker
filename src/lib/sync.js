@@ -48,6 +48,16 @@ export async function pullFromCloud() {
 }
 
 /**
+ * Full two-way sync: push local data up, then pull cloud data down.
+ * Used by the "SYNC NOW" button.
+ */
+export async function fullSync() {
+  if (!isLoggedIn() || syncing) return;
+  await pushAllToCloud();
+  await pullFromCloud();
+}
+
+/**
  * Push a single template change to the cloud.
  */
 export async function pushTemplate(day) {
