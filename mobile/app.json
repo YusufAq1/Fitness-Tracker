@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Overload",
+    "slug": "overload-fitness",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "scheme": "overload",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#f0ead2"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.overload.fitness"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#f0ead2"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.overload.fitness"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ]
+  }
+}
