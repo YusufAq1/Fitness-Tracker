@@ -3,6 +3,7 @@ import { escapeHTML, escapeAttr } from '../utils/sanitize.js';
 import { showToast } from '../ui/toast.js';
 import { goBack } from '../ui/tabs.js';
 import { openAddExercise } from '../ui/modals.js';
+import { pushLog } from '../lib/sync.js';
 
 function getLastLog(exId) {
   const logs = data.logs.filter((l) => l.exerciseId === exId).sort((a, b) => b.date - a.date);
@@ -153,18 +154,21 @@ export function saveLog() {
     save();
     renderDays();
     showToast('SESSION UPDATED \u2713');
+    if (log) pushLog(log);
   } else {
-    data.logs.push({
+    const newLog = {
       id: Date.now() + '',
       exerciseId: state.currentExId,
       exerciseName: state.currentExName,
       dayName: state.currentDayName,
       date: Date.now(),
       sets,
-    });
+    };
+    data.logs.push(newLog);
     save();
     renderDays();
     showToast('SESSION SAVED \u2713');
+    pushLog(newLog);
   }
   goBack();
 }

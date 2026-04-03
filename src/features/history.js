@@ -5,6 +5,7 @@ import { getPersonalRecords, isPersonalRecord } from './records.js';
 import { showToast } from '../ui/toast.js';
 import { closeModal } from '../ui/modals.js';
 import { setUnit, renderSets } from './workouts.js';
+import { removeLog } from '../lib/sync.js';
 
 export function getPrevLog(exId, beforeDate) {
   return data.logs.filter((l) => l.exerciseId === exId && l.date < beforeDate).sort((a, b) => b.date - a.date)[0] || null;
@@ -124,6 +125,7 @@ export function deleteSession(logId, exerciseName) {
     renderHistory();
     closeModal('confirmModal');
     showToast('SESSION DELETED');
+    removeLog(logId);
   };
   document.getElementById('confirmModal').classList.add('open');
 }

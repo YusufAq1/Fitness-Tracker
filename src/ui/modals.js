@@ -1,6 +1,7 @@
 import { data, save, generateId, state } from '../state/store.js';
 import { renderDays } from '../features/workouts.js';
 import { showToast } from './toast.js';
+import { pushTemplate, removeTemplate } from '../lib/sync.js';
 
 export function openModal(id) {
   document.getElementById(id).classList.add('open');
@@ -28,10 +29,12 @@ export function openAddDay() {
 export function confirmAddDay() {
   const name = document.getElementById('dayNameInput').value.trim();
   if (!name) return;
-  data.days.push({ id: generateId('d-'), name, exercises: [] });
+  const newDay = { id: generateId('d-'), name, exercises: [] };
+  data.days.push(newDay);
   save();
   renderDays();
   closeModal('addDayModal');
+  pushTemplate(newDay);
 }
 
 // ─── ADD EXERCISE ─────────────────────────────────────
@@ -47,14 +50,17 @@ export function confirmAddExercise() {
   const name = document.getElementById('exNameInput').value.trim();
   if (!name) return;
   const day = data.days.find((d) => d.id === state.addExDayId);
-  if (day) day.exercises.push({ id: generateId('e-'), name });
-  save();
-  renderDays();
-  closeModal('addExModal');
-  setTimeout(() => {
-    const dc = document.getElementById('dc-' + state.addExDayId);
-    if (dc) dc.classList.add('open');
-  }, 50);
+  if (day) {
+    day.exercises.push({ id: generateId('e-'), name });
+    save();
+    renderDays();
+    closeModal('addExModal');
+    setTimeout(() => {
+      const dc = document.getElementById('dc-' + state.addExDayId);
+      if (dc) dc.classList.add('open');
+    }, 50);
+    pushTemplate(day);
+  }
 }
 
 // ─── EDIT DAY ─────────────────────────────────────────
@@ -77,6 +83,7 @@ export function confirmEditDay() {
     renderDays();
     closeModal('editDayModal');
     showToast('DAY RENAMED');
+    pushTemplate(day);
   }
 }
 
@@ -90,6 +97,7 @@ export function deleteDay(dayId, dayName) {
     renderDays();
     closeModal('confirmModal');
     showToast('DAY DELETED');
+    removeTemplate(dayId);
   };
   openModal('confirmModal');
 }
@@ -117,6 +125,7 @@ export function confirmEditExercise() {
     renderDays();
     closeModal('editExModal');
     showToast('EXERCISE RENAMED');
+    pushTemplate(day);
   }
 }
 
@@ -126,11 +135,14 @@ export function deleteExercise(dayId, exId, exName) {
   document.getElementById('confirmMsg').textContent = `Delete "${exName}"? This cannot be undone.`;
   state.confirmCallback = () => {
     const day = data.days.find((d) => d.id === dayId);
-    if (day) day.exercises = day.exercises.filter((e) => e.id !== exId);
-    save();
-    renderDays();
-    closeModal('confirmModal');
-    showToast('EXERCISE DELETED');
+    if (day) {
+      day.exercises = day.exercises.filter((e) => e.id !== exId);
+      save();
+      renderDays();
+      closeModal('confirmModal');
+      showToast('EXERCISE DELETED');
+      pushTemplate(day);
+    }
   };
   openModal('confirmModal');
 }
