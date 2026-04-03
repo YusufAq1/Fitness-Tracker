@@ -5,6 +5,10 @@ import { initContextMenu } from './ui/context-menu.js';
 import { renderDays, addSet, saveLog, setUnit, initWorkoutEvents } from './features/workouts.js';
 import { exportData, importData } from './features/data-io.js';
 import { showToast } from './ui/toast.js';
+import { initAuth, onAuthChange } from './lib/auth.js';
+import { initAuthUI, updateAuthUI } from './ui/auth-ui.js';
+import { pullFromCloud } from './lib/sync.js';
+import { checkMigration } from './features/migration.js';
 
 // ─── GLOBAL ERROR HANDLERS ───────────────────────────
 window.onerror = (_msg, _src, _line, _col, err) => {
@@ -23,6 +27,21 @@ initModals();
 initContextMenu();
 initWorkoutEvents();
 renderDays();
+
+// Initialize auth (async)
+initAuth().then(() => {
+  initAuthUI();
+
+  // When auth state changes, update UI and sync
+  onAuthChange(async (user) => {
+    updateAuthUI();
+    if (user) {
+      await pullFromCloud();
+      renderDays();
+      await checkMigration();
+    }
+  });
+});
 
 // ─── EVENT DELEGATION FOR TOP-LEVEL BUTTONS ───────────
 // Nav buttons
