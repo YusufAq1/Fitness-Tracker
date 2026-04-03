@@ -10,7 +10,8 @@
       "Bash(npx eslint:*)",
       "mcp__Claude_Preview__preview_start",
       "Bash(npx vitest:*)",
-      "Bash(where gh:*)"
+      "Bash(where gh:*)",
+      "Bash(gh pr:*)"
     ]
   }
 }
