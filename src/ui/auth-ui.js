@@ -1,7 +1,7 @@
 import { signUp, signIn, signInWithGoogle, signOut, resetPassword, getUser, isLoggedIn } from '../lib/auth.js';
 import { isSupabaseConfigured } from '../lib/supabase.js';
 import { showToast } from './toast.js';
-import { pullFromCloud } from '../lib/sync.js';
+import { pullFromCloud, fullSync } from '../lib/sync.js';
 import { renderDays } from '../features/workouts.js';
 
 let currentAuthView = 'login'; // 'login' | 'signup' | 'forgot'
@@ -213,7 +213,7 @@ export function renderAccountSection() {
       btn.disabled = true;
       btn.textContent = 'SYNCING...';
       try {
-        await pullFromCloud();
+        await fullSync();
         renderDays();
         showToast('SYNCED \u2713');
       } catch (_err) {
