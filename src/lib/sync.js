@@ -53,8 +53,10 @@ export async function pullFromCloud() {
  */
 export async function fullSync() {
   if (!isLoggedIn() || syncing) return;
-  await pushAllToCloud();
+  // Pull first so cloud data replaces local defaults
   await pullFromCloud();
+  // Then push any local data back to cloud
+  await pushAllToCloud();
 }
 
 /**

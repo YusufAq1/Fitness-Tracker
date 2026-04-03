@@ -34,8 +34,16 @@ export default function AuthSection() {
 
   useEffect(() => {
     initAuth();
-    const unsubscribe = onAuthChange(() => {
+    const unsubscribe = onAuthChange(async (user) => {
       setLoggedIn(isLoggedIn());
+      // Auto-sync whenever user logs in or session is restored
+      if (user) {
+        try {
+          await fullSync();
+        } catch (_e) {
+          // silent — manual sync still available
+        }
+      }
     });
     return unsubscribe;
   }, []);

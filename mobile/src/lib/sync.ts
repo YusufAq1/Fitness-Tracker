@@ -115,7 +115,8 @@ export async function pushAllToCloud(): Promise<boolean> {
 
 export async function fullSync(): Promise<boolean> {
   if (!isLoggedIn() || syncing) return false;
-  const pushed = await pushAllToCloud();
-  if (!pushed) return false;
-  return pullFromCloud();
+  // Pull first so cloud data replaces local defaults
+  await pullFromCloud();
+  // Then push any local data back to cloud
+  return pushAllToCloud();
 }

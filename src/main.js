@@ -7,7 +7,7 @@ import { exportData, importData } from './features/data-io.js';
 import { showToast } from './ui/toast.js';
 import { initAuth, onAuthChange } from './lib/auth.js';
 import { initAuthUI, updateAuthUI } from './ui/auth-ui.js';
-import { pullFromCloud } from './lib/sync.js';
+import { fullSync } from './lib/sync.js';
 import { checkMigration } from './features/migration.js';
 
 // ─── GLOBAL ERROR HANDLERS ───────────────────────────
@@ -32,11 +32,11 @@ renderDays();
 initAuth().then(() => {
   initAuthUI();
 
-  // When auth state changes, update UI and sync
+  // When auth state changes, update UI and auto-sync
   onAuthChange(async (user) => {
     updateAuthUI();
     if (user) {
-      await pullFromCloud();
+      await fullSync();
       renderDays();
       await checkMigration();
     }
