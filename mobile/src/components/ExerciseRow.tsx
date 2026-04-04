@@ -1,7 +1,9 @@
-import { View, Text, Pressable, StyleSheet, ActionSheetIOS, Platform, Alert } from 'react-native';
+import { useState } from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors, fonts, spacing } from '../constants/theme';
 import type { Exercise } from '../types';
 import { useLastLog } from '../hooks/useLastLog';
+import ContextMenu from './ContextMenu';
 
 interface ExerciseRowProps {
   exercise: Exercise;
@@ -19,28 +21,7 @@ export default function ExerciseRow({
   onDelete,
 }: ExerciseRowProps) {
   const lastLog = useLastLog(exercise.id);
-
-  function handleLongPress() {
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ['Rename', 'Delete', 'Cancel'],
-          destructiveButtonIndex: 1,
-          cancelButtonIndex: 2,
-        },
-        (index) => {
-          if (index === 0) onRename();
-          if (index === 1) onDelete();
-        },
-      );
-    } else {
-      Alert.alert(exercise.name, '', [
-        { text: 'Rename', onPress: onRename },
-        { text: 'Delete', style: 'destructive', onPress: onDelete },
-        { text: 'Cancel', style: 'cancel' },
-      ]);
-    }
-  }
+  const [menuVisible, setMenuVisible] = useState(false);
 
   const lastSummary = lastLog
     ? lastLog.sets.map((s) => `${s.kg}${s.unit} \u00D7 ${s.reps}`).join('  ')
@@ -49,7 +30,7 @@ export default function ExerciseRow({
   return (
     <Pressable
       onPress={onPress}
-      onLongPress={handleLongPress}
+      onLongPress={() => setMenuVisible(true)}
       delayLongPress={500}
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}
     >
@@ -58,6 +39,16 @@ export default function ExerciseRow({
         {lastSummary && <Text style={styles.last}>{lastSummary}</Text>}
       </View>
       <Text style={styles.arrow}>{'\u203A'}</Text>
+
+      <ContextMenu
+        visible={menuVisible}
+        title={exercise.name}
+        options={[
+          { label: 'Rename', onPress: onRename },
+          { label: 'Delete', onPress: onDelete, destructive: true },
+        ]}
+        onClose={() => setMenuVisible(false)}
+      />
     </Pressable>
   );
 }

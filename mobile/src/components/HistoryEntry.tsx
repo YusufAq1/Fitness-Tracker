@@ -1,7 +1,9 @@
-import { View, Text, Pressable, StyleSheet, ActionSheetIOS, Platform, Alert } from 'react-native';
+import { useState } from 'react';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors, fonts, radii, spacing } from '../constants/theme';
 import { formatDate } from '../utils/date';
 import type { Log } from '../types';
+import ContextMenu from './ContextMenu';
 
 interface HistoryEntryProps {
   log: Log;
@@ -12,35 +14,14 @@ interface HistoryEntryProps {
 }
 
 export default function HistoryEntry({ log, isPR, prevLog, onEdit, onDelete }: HistoryEntryProps) {
+  const [menuVisible, setMenuVisible] = useState(false);
   const maxKg = Math.max(...log.sets.map((s) => s.kg));
   const prevMaxKg = prevLog ? Math.max(...prevLog.sets.map((s) => s.kg)) : 0;
   const weightDiff = prevLog ? maxKg - prevMaxKg : 0;
   const progressPct = prevMaxKg > 0 ? Math.min((maxKg / (prevMaxKg * 1.5)) * 100, 100) : 0;
 
-  function handleLongPress() {
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ['Edit', 'Delete', 'Cancel'],
-          destructiveButtonIndex: 1,
-          cancelButtonIndex: 2,
-        },
-        (index) => {
-          if (index === 0) onEdit();
-          if (index === 1) onDelete();
-        },
-      );
-    } else {
-      Alert.alert(log.exerciseName, '', [
-        { text: 'Edit', onPress: onEdit },
-        { text: 'Delete', style: 'destructive', onPress: onDelete },
-        { text: 'Cancel', style: 'cancel' },
-      ]);
-    }
-  }
-
   return (
-    <Pressable onLongPress={handleLongPress} delayLongPress={500} style={styles.card}>
+    <Pressable onLongPress={() => setMenuVisible(true)} delayLongPress={500} style={styles.card}>
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Text style={styles.name}>{log.exerciseName}</Text>
@@ -77,6 +58,16 @@ export default function HistoryEntry({ log, isPR, prevLog, onEdit, onDelete }: H
           </Text>
         </View>
       )}
+
+      <ContextMenu
+        visible={menuVisible}
+        title={log.exerciseName}
+        options={[
+          { label: 'Edit', onPress: onEdit },
+          { label: 'Delete', onPress: onDelete, destructive: true },
+        ]}
+        onClose={() => setMenuVisible(false)}
+      />
     </Pressable>
   );
 }

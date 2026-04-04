@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, ActionSheetIOS, Platform, Alert } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors, fonts, radii, spacing } from '../constants/theme';
 import type { Day } from '../types';
 import ExerciseRow from './ExerciseRow';
 import Button from './Button';
+import ContextMenu from './ContextMenu';
 
 interface DayCardProps {
   day: Day;
@@ -25,34 +26,13 @@ export default function DayCard({
   onExercisePress,
 }: DayCardProps) {
   const [expanded, setExpanded] = useState(false);
-
-  function handleLongPress() {
-    if (Platform.OS === 'ios') {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ['Rename', 'Delete', 'Cancel'],
-          destructiveButtonIndex: 1,
-          cancelButtonIndex: 2,
-        },
-        (index) => {
-          if (index === 0) onRenameDay(day.id, day.name);
-          if (index === 1) onDeleteDay(day.id);
-        },
-      );
-    } else {
-      Alert.alert(day.name, '', [
-        { text: 'Rename', onPress: () => onRenameDay(day.id, day.name) },
-        { text: 'Delete', style: 'destructive', onPress: () => onDeleteDay(day.id) },
-        { text: 'Cancel', style: 'cancel' },
-      ]);
-    }
-  }
+  const [menuVisible, setMenuVisible] = useState(false);
 
   return (
     <View style={styles.card}>
       <Pressable
         onPress={() => setExpanded(!expanded)}
-        onLongPress={handleLongPress}
+        onLongPress={() => setMenuVisible(true)}
         delayLongPress={500}
         style={styles.header}
       >
@@ -86,6 +66,16 @@ export default function DayCard({
           />
         </View>
       )}
+
+      <ContextMenu
+        visible={menuVisible}
+        title={day.name}
+        options={[
+          { label: 'Rename', onPress: () => onRenameDay(day.id, day.name) },
+          { label: 'Delete', onPress: () => onDeleteDay(day.id), destructive: true },
+        ]}
+        onClose={() => setMenuVisible(false)}
+      />
     </View>
   );
 }
