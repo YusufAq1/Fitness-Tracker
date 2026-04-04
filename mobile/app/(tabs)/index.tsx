@@ -114,7 +114,7 @@ export default function WorkoutsScreen() {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <DrawerToggle />
-          <Image source={require('../../assets/icon.png')} style={styles.logoIcon} />
+          <Image source={require('../../assets/icon2.png')} style={styles.logoIcon} />
           <Text style={styles.logo}>VYRA</Text>
         </View>
         <Text style={styles.date}>{todayHeader()}</Text>
@@ -210,8 +210,8 @@ const styles = StyleSheet.create({
   logoIcon: {
     width: 34,
     height: 34,
-    borderRadius: 7,
     marginRight: 8,
+    tintColor: colors.accent,
   },
   logo: {
     fontFamily: fonts.display,
