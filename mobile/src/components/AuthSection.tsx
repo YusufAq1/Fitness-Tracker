@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, TextInput } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { Feather } from '@expo/vector-icons';
 import {
   signUp,
   signIn,
@@ -206,7 +207,7 @@ export default function AuthSection() {
           style={styles.input}
         />
         {authView !== 'forgot' && (
-          <View style={styles.passwordRow}>
+          <View style={styles.passwordWrapper}>
             <Input
               placeholder={authView === 'signup' ? 'Password (min 6 chars)' : 'Password'}
               value={password}
@@ -219,7 +220,11 @@ export default function AuthSection() {
               style={styles.eyeBtn}
               hitSlop={8}
             >
-              <Text style={styles.eyeText}>{showPassword ? 'HIDE' : 'SHOW'}</Text>
+              <Feather
+                name={showPassword ? 'eye-off' : 'eye'}
+                size={20}
+                color={colors.muted}
+              />
             </Pressable>
           </View>
         )}
@@ -366,24 +371,22 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: spacing.sm,
   },
-  passwordRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  passwordWrapper: {
+    position: 'relative',
     marginBottom: spacing.sm,
   },
   passwordInput: {
-    flex: 1,
     marginBottom: 0,
+    paddingRight: 48,
   },
   eyeBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-  },
-  eyeText: {
-    fontFamily: fonts.monoMedium,
-    fontSize: 10,
-    color: colors.muted,
-    letterSpacing: 1,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   submitBtn: {
     marginTop: spacing.sm,

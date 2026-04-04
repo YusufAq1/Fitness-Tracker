@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, Text, Image, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useRouter } from 'expo-router';
@@ -114,10 +114,7 @@ export default function WorkoutsScreen() {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <DrawerToggle />
-          <View style={styles.logoRow}>
-            <Image source={require('../../assets/icon.png')} style={styles.logoIcon} />
-            <Text style={styles.logo}>VYRA</Text>
-          </View>
+          <Text style={styles.logo}>VYRA</Text>
         </View>
         <Text style={styles.date}>{todayHeader()}</Text>
       </View>
@@ -208,16 +205,6 @@ const styles = StyleSheet.create({
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  logoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  logoIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 6,
   },
   logo: {
     fontFamily: fonts.display,
