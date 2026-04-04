@@ -1,5 +1,5 @@
 -- ============================================================
--- Overload Fitness Tracker — Supabase Database Schema
+-- Vyra Fitness Tracker — Supabase Database Schema
 -- ============================================================
 -- Run this in your Supabase SQL Editor (Dashboard > SQL Editor > New Query)
 -- This creates all tables, indexes, and Row Level Security policies.

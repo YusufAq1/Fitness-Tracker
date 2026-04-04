@@ -1,6 +1,6 @@
 {
-  "name": "Overload - Fitness Tracker",
-  "short_name": "Overload",
+  "name": "Vyra - Fitness Tracker",
+  "short_name": "Vyra",
   "description": "Progressive overload workout tracker",
   "start_url": "/index.html",
   "display": "standalone",

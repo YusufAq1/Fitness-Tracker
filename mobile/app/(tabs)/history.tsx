@@ -11,6 +11,7 @@ import HistoryEntry from '../../src/components/HistoryEntry';
 import Chip from '../../src/components/Chip';
 import EmptyState from '../../src/components/EmptyState';
 import ConfirmDialog from '../../src/components/ConfirmDialog';
+import DrawerToggle from '../../src/components/DrawerToggle';
 import type { Log } from '../../src/types';
 
 export default function HistoryScreen() {
@@ -64,7 +65,10 @@ export default function HistoryScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.title}>HISTORY</Text>
+        <View style={styles.headerRow}>
+          <DrawerToggle />
+          <Text style={styles.title}>HISTORY</Text>
+        </View>
       </View>
 
       {logs.length > 0 && (
@@ -120,6 +124,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   title: {
     fontFamily: fonts.display,

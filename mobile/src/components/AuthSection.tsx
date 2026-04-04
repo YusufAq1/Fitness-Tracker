@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, TextInput } from 'react-native';
 import {
   signUp,
   signIn,
@@ -31,6 +31,7 @@ export default function AuthSection() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     initAuth();
@@ -205,13 +206,22 @@ export default function AuthSection() {
           style={styles.input}
         />
         {authView !== 'forgot' && (
-          <Input
-            placeholder={authView === 'signup' ? 'Password (min 6 chars)' : 'Password'}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            style={styles.input}
-          />
+          <View style={styles.passwordRow}>
+            <Input
+              placeholder={authView === 'signup' ? 'Password (min 6 chars)' : 'Password'}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!showPassword}
+              style={[styles.input, styles.passwordInput]}
+            />
+            <Pressable
+              onPress={() => setShowPassword(!showPassword)}
+              style={styles.eyeBtn}
+              hitSlop={8}
+            >
+              <Text style={styles.eyeText}>{showPassword ? 'HIDE' : 'SHOW'}</Text>
+            </Pressable>
+          </View>
         )}
 
         <Button
@@ -355,6 +365,25 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: spacing.sm,
+  },
+  passwordRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
+  passwordInput: {
+    flex: 1,
+    marginBottom: 0,
+  },
+  eyeBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  eyeText: {
+    fontFamily: fonts.monoMedium,
+    fontSize: 10,
+    color: colors.muted,
+    letterSpacing: 1,
   },
   submitBtn: {
     marginTop: spacing.sm,

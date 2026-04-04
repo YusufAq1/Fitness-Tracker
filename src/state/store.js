@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'overload_data';
+const STORAGE_KEY = 'overload_data'; // Legacy key — do not rename, would lose existing user data
 
 const DEFAULT_DATA = {
   days: [

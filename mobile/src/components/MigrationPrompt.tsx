@@ -8,7 +8,7 @@ import { useStore } from '../store/useStore';
 import { useToast } from '../hooks/useToast';
 import ConfirmDialog from './ConfirmDialog';
 
-const MIGRATION_KEY = 'overload_migrated';
+const MIGRATION_KEY = 'overload_migrated'; // Legacy key — do not rename, would lose existing user data
 
 export default function MigrationPrompt() {
   const { showToast } = useToast();

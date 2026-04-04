@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, Image, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useRouter } from 'expo-router';
@@ -13,7 +13,7 @@ import Button from '../../src/components/Button';
 import AddDaySheet from '../../src/components/AddDaySheet';
 import AddExerciseSheet from '../../src/components/AddExerciseSheet';
 import ConfirmDialog from '../../src/components/ConfirmDialog';
-import AuthSection from '../../src/components/AuthSection';
+import DrawerToggle from '../../src/components/DrawerToggle';
 
 export default function WorkoutsScreen() {
   const router = useRouter();
@@ -112,7 +112,13 @@ export default function WorkoutsScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <View style={styles.header}>
-        <Text style={styles.logo}>OVERLOAD</Text>
+        <View style={styles.headerTop}>
+          <DrawerToggle />
+          <View style={styles.logoRow}>
+            <Image source={require('../../assets/icon.png')} style={styles.logoIcon} />
+            <Text style={styles.logo}>VYRA</Text>
+          </View>
+        </View>
         <Text style={styles.date}>{todayHeader()}</Text>
       </View>
 
@@ -146,7 +152,6 @@ export default function WorkoutsScreen() {
           style={styles.addDayBtn}
         />
 
-        <AuthSection />
       </KeyboardAwareScrollView>
 
       <AddDaySheet
@@ -199,6 +204,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.sm,
     paddingBottom: spacing.md,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  logoIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
   },
   logo: {
     fontFamily: fonts.display,

@@ -1,4 +1,4 @@
-const CACHE = 'overload-v6';
+const CACHE = 'vyra-v7';
 
 // Install: activate immediately
 self.addEventListener('install', () => {

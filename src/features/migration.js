@@ -4,7 +4,7 @@ import { fetchTemplates } from '../lib/db.js';
 import { pushAllToCloud } from '../lib/sync.js';
 import { showToast } from '../ui/toast.js';
 
-const MIGRATION_KEY = 'overload_migrated';
+const MIGRATION_KEY = 'overload_migrated'; // Legacy key — do not rename, would lose existing user data
 
 /**
  * Check if local data should be migrated to cloud.

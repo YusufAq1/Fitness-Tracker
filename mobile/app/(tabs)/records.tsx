@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DrawerToggle from '../../src/components/DrawerToggle';
 import { useStore } from '../../src/store/useStore';
 import { getPersonalRecords } from '../../src/utils/records';
 import { colors, fonts, spacing } from '../../src/constants/theme';
@@ -28,7 +29,10 @@ export default function RecordsScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Text style={styles.title}>RECORDS</Text>
+      <View style={styles.header}>
+        <DrawerToggle />
+        <Text style={styles.title}>RECORDS</Text>
+      </View>
       <FlatList
         data={records}
         keyExtractor={(item) => item.logId}
@@ -47,14 +51,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.bg,
   },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.md,
+  },
   title: {
     fontFamily: fonts.display,
     fontSize: 36,
     color: colors.accent,
     letterSpacing: 2,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.md,
   },
   list: {
     paddingHorizontal: spacing.xl,

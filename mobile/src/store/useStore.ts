@@ -144,7 +144,7 @@ export const useStore = create<StoreState>()(
       getDay: (dayId) => get().days.find((d) => d.id === dayId),
     }),
     {
-      name: 'overload_data',
+      name: 'overload_data', // Legacy key — do not rename, would lose existing user data
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({
         days: state.days,
