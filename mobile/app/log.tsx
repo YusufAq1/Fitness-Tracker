@@ -2,13 +2,11 @@ import { useState, useEffect, useMemo } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useStore } from '../src/store/useStore';
 import { pushLog } from '../src/lib/sync';
@@ -123,22 +121,19 @@ export default function LogScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
-      >
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} hitSlop={12}>
             <Text style={styles.back}>{'\u2190'} BACK</Text>
           </Pressable>
         </View>
 
-        <ScrollView
+        <KeyboardAwareScrollView
           style={styles.flex}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="interactive"
+          extraScrollHeight={120}
+          enableOnAndroid
+          enableResetScrollToCoords={false}
         >
           <Text style={styles.exerciseName}>{params.exName}</Text>
           <Text style={styles.meta}>
@@ -170,15 +165,14 @@ export default function LogScreen() {
             onPress={addSet}
             style={styles.addSetBtn}
           />
-        </ScrollView>
 
-        <View style={styles.footer}>
-          <Button
-            title={isEditing ? 'Update Session' : 'Save Session'}
-            onPress={handleSave}
-          />
-        </View>
-      </KeyboardAvoidingView>
+          <View style={styles.footer}>
+            <Button
+              title={isEditing ? 'Update Session' : 'Save Session'}
+              onPress={handleSave}
+            />
+          </View>
+        </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -231,8 +225,8 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   footer: {
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.lg,
+    marginTop: spacing.xl,
+    paddingTop: spacing.lg,
     borderTopWidth: 1,
     borderTopColor: colors.border,
   },

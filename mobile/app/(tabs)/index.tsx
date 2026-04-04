@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useRouter } from 'expo-router';
 import { useStore } from '../../src/store/useStore';
 import { pushTemplate, removeTemplate } from '../../src/lib/sync';
@@ -110,21 +111,18 @@ export default function WorkoutsScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
-      >
       <View style={styles.header}>
         <Text style={styles.logo}>OVERLOAD</Text>
         <Text style={styles.date}>{todayHeader()}</Text>
       </View>
 
-      <ScrollView
+      <KeyboardAwareScrollView
         style={styles.scroll}
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="interactive"
+        extraScrollHeight={120}
+        enableOnAndroid
+        enableResetScrollToCoords={false}
       >
         <Text style={styles.sectionTitle}>YOUR DAYS</Text>
 
@@ -149,7 +147,7 @@ export default function WorkoutsScreen() {
         />
 
         <AuthSection />
-      </ScrollView>
+      </KeyboardAwareScrollView>
 
       <AddDaySheet
         visible={showAddDay}
@@ -188,7 +186,6 @@ export default function WorkoutsScreen() {
         onConfirm={handleConfirmDelete}
         onCancel={() => setConfirmDelete(null)}
       />
-      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -197,9 +194,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.bg,
-  },
-  flex: {
-    flex: 1,
   },
   header: {
     paddingHorizontal: spacing.xl,
