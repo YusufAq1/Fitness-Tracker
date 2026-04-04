@@ -1,10 +1,12 @@
 import { Tabs } from 'expo-router';
-import { Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 const TAB_COLORS = {
   active: '#6c584c',
   inactive: '#a98467',
   bg: '#f0ead2',
+  activeBg: 'rgba(108, 88, 76, 0.12)',
+  border: '#c8c0a8',
 };
 
 export default function TabLayout() {
@@ -14,18 +16,26 @@ export default function TabLayout() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: TAB_COLORS.bg,
-          borderTopColor: '#c8c0a8',
+          borderTopColor: TAB_COLORS.border,
           borderTopWidth: 1,
-          paddingTop: 8,
-          paddingBottom: 8,
-          height: 60,
+          paddingTop: 6,
+          paddingBottom: 6,
+          height: 52,
+          paddingHorizontal: 12,
         },
         tabBarActiveTintColor: TAB_COLORS.active,
         tabBarInactiveTintColor: TAB_COLORS.inactive,
+        tabBarShowLabel: true,
+        tabBarIconStyle: { display: 'none' },
+        tabBarItemStyle: {
+          borderRadius: 8,
+          marginHorizontal: 4,
+          paddingVertical: 6,
+        },
         tabBarLabelStyle: {
-          fontFamily: 'DMMono_400Regular',
-          fontSize: 11,
-          letterSpacing: 1,
+          fontFamily: 'DMMono_500Medium',
+          fontSize: 12,
+          letterSpacing: 1.5,
           textTransform: 'uppercase',
         },
       }}
@@ -34,27 +44,24 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Workouts',
-          tabBarIcon: ({ color }) => (
-            <Text style={{ fontSize: 20, color }}>💪</Text>
-          ),
+          tabBarIcon: () => null,
+          tabBarActiveBackgroundColor: TAB_COLORS.activeBg,
         }}
       />
       <Tabs.Screen
         name="history"
         options={{
           title: 'History',
-          tabBarIcon: ({ color }) => (
-            <Text style={{ fontSize: 20, color }}>📋</Text>
-          ),
+          tabBarIcon: () => null,
+          tabBarActiveBackgroundColor: TAB_COLORS.activeBg,
         }}
       />
       <Tabs.Screen
         name="records"
         options={{
           title: 'Records',
-          tabBarIcon: ({ color }) => (
-            <Text style={{ fontSize: 20, color }}>🏆</Text>
-          ),
+          tabBarIcon: () => null,
+          tabBarActiveBackgroundColor: TAB_COLORS.activeBg,
         }}
       />
     </Tabs>

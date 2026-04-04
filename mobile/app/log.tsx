@@ -125,7 +125,8 @@ export default function LogScreen() {
     <SafeAreaView style={styles.container} edges={['top']}>
       <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} hitSlop={12}>
@@ -133,7 +134,12 @@ export default function LogScreen() {
           </Pressable>
         </View>
 
-        <ScrollView style={styles.flex} contentContainerStyle={styles.scrollContent}>
+        <ScrollView
+          style={styles.flex}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
+        >
           <Text style={styles.exerciseName}>{params.exName}</Text>
           <Text style={styles.meta}>
             {params.dayName} {'\u00B7'} {isEditing && editingLog ? formatDate(editingLog.date).toUpperCase() : todayHeader()}
@@ -197,7 +203,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: spacing.xl,
-    paddingBottom: 20,
+    paddingBottom: 120,
   },
   exerciseName: {
     fontFamily: fonts.display,

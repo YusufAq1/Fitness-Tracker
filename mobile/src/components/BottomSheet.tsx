@@ -18,7 +18,8 @@ export default function BottomSheet({ visible, onClose, title, children }: Botto
     >
       <Pressable style={styles.overlay} onPress={onClose}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 10 : 0}
           style={styles.keyboardView}
         >
           <Pressable style={styles.sheet} onPress={(e) => e.stopPropagation()}>

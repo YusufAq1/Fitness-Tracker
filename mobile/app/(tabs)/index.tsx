@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useStore } from '../../src/store/useStore';
@@ -110,12 +110,22 @@ export default function WorkoutsScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
+      <KeyboardAvoidingView
+        style={styles.flex}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 20}
+      >
       <View style={styles.header}>
         <Text style={styles.logo}>OVERLOAD</Text>
         <Text style={styles.date}>{todayHeader()}</Text>
       </View>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="interactive"
+      >
         <Text style={styles.sectionTitle}>YOUR DAYS</Text>
 
         {days.map((day) => (
@@ -178,6 +188,7 @@ export default function WorkoutsScreen() {
         onConfirm={handleConfirmDelete}
         onCancel={() => setConfirmDelete(null)}
       />
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -186,6 +197,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.bg,
+  },
+  flex: {
+    flex: 1,
   },
   header: {
     paddingHorizontal: spacing.xl,
@@ -210,7 +224,7 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: spacing.xl,
-    paddingBottom: 40,
+    paddingBottom: 120,
   },
   sectionTitle: {
     fontFamily: fonts.display,
