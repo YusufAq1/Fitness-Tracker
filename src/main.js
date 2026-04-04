@@ -9,6 +9,7 @@ import { initAuth, onAuthChange } from './lib/auth.js';
 import { initAuthUI, updateAuthUI } from './ui/auth-ui.js';
 import { fullSync } from './lib/sync.js';
 import { checkMigration } from './features/migration.js';
+import { resetToDefaults } from './state/store.js';
 
 // ─── GLOBAL ERROR HANDLERS ───────────────────────────
 window.onerror = (_msg, _src, _line, _col, err) => {
@@ -39,6 +40,9 @@ initAuth().then(() => {
       await fullSync();
       renderDays();
       await checkMigration();
+    } else {
+      resetToDefaults();
+      renderDays();
     }
   });
 });

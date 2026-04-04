@@ -3,6 +3,7 @@ import { isSupabaseConfigured } from '../lib/supabase.js';
 import { showToast } from './toast.js';
 import { pullFromCloud, fullSync } from '../lib/sync.js';
 import { renderDays } from '../features/workouts.js';
+import { resetToDefaults } from '../state/store.js';
 
 let currentAuthView = 'login'; // 'login' | 'signup' | 'forgot'
 
@@ -201,6 +202,8 @@ export function renderAccountSection() {
     document.getElementById('signOutBtn')?.addEventListener('click', async () => {
       try {
         await signOut();
+        resetToDefaults();
+        renderDays();
         showToast('SIGNED OUT');
         updateAuthUI();
       } catch (_err) {

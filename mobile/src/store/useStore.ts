@@ -50,6 +50,7 @@ interface StoreState {
   // Helpers
   generateId: (prefix: string) => string;
   getDay: (dayId: string) => Day | undefined;
+  resetToDefaults: () => void;
 }
 
 export const useStore = create<StoreState>()(
@@ -142,6 +143,10 @@ export const useStore = create<StoreState>()(
       generateId: (prefix) => prefix + crypto.randomUUID(),
 
       getDay: (dayId) => get().days.find((d) => d.id === dayId),
+
+      resetToDefaults: () => {
+        set({ days: DEFAULT_DAYS, logs: [], currentUnit: 'kg' });
+      },
     }),
     {
       name: 'overload_data', // Legacy key — do not rename, would lose existing user data

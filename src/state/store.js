@@ -54,6 +54,11 @@ export function replaceData(newData) {
   save();
 }
 
+export function resetToDefaults() {
+  data = { ...DEFAULT_DATA, days: DEFAULT_DATA.days.map((d) => ({ ...d, exercises: [...d.exercises] })) };
+  save();
+}
+
 export function generateId(prefix) {
   return prefix + crypto.randomUUID();
 }

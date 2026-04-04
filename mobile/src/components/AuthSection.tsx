@@ -14,6 +14,7 @@ import {
 } from '../lib/auth';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { fullSync } from '../lib/sync';
+import { useStore } from '../store/useStore';
 import { useToast } from '../hooks/useToast';
 import { colors, fonts, radii, spacing } from '../constants/theme';
 import Input from './Input';
@@ -108,6 +109,7 @@ export default function AuthSection() {
   async function handleSignOut() {
     try {
       await signOut();
+      useStore.getState().resetToDefaults();
       showToast('Signed out');
     } catch (_err) {
       showToast('Sign out failed');
