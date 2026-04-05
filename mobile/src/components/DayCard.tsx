@@ -51,8 +51,6 @@ export default function DayCard({
             <ExerciseRow
               key={ex.id}
               exercise={ex}
-              dayId={day.id}
-              dayName={day.name}
               onPress={() => onExercisePress(day.id, ex.id, ex.name, day.name)}
               onRename={() => onRenameExercise(day.id, ex.id, ex.name)}
               onDelete={() => onDeleteExercise(day.id, ex.id)}

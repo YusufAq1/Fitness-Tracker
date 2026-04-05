@@ -349,11 +349,6 @@ body {
   transition: border-color 0.2s;
 }
 
-.set-input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
 .set-sep {
   color: var(--muted);
   padding: 0 8px;
@@ -402,7 +397,7 @@ body {
   background: var(--accent);
   border: none;
   border-radius: 10px;
-  color: #faf7ee;
+  color: var(--surface);
   font-family: 'Bebas Neue', sans-serif;
   font-size: 20px;
   letter-spacing: 3px;
@@ -462,7 +457,7 @@ body {
 .filter-chip.active {
   background: var(--accent);
   border-color: var(--accent);
-  color: #faf7ee;
+  color: var(--surface);
 }
 
 .history-entry {
@@ -609,11 +604,6 @@ body {
   transition: border-color 0.2s;
 }
 
-.modal-input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
 .modal-actions {
   display: flex;
   gap: 10px;
@@ -625,7 +615,7 @@ body {
   background: var(--accent);
   border: none;
   border-radius: 8px;
-  color: #faf7ee;
+  color: var(--surface);
   font-family: 'Bebas Neue', sans-serif;
   font-size: 18px;
   letter-spacing: 2px;
@@ -648,7 +638,6 @@ body {
 /* UNIT TOGGLE */
 .unit-toggle {
   display: flex;
-  gap: 0;
   margin-bottom: 20px;
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -670,7 +659,7 @@ body {
 
 .unit-btn.active {
   background: var(--accent);
-  color: #faf7ee;
+  color: var(--surface);
 }
 
 /* DATA MANAGEMENT */
@@ -702,23 +691,14 @@ body {
   margin-bottom: 8px;
 }
 
-.data-btn-export {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  color: var(--text);
-}
-
-.data-btn-export:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
+.data-btn-export,
 .data-btn-import {
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text);
 }
 
+.data-btn-export:hover,
 .data-btn-import:hover {
   border-color: var(--accent);
   color: var(--accent);
@@ -743,7 +723,7 @@ body {
   left: 50%;
   transform: translateX(-50%) translateY(80px);
   background: var(--accent);
-  color: #faf7ee;
+  color: var(--surface);
   font-family: 'DM Mono', monospace;
   font-size: 12px;
   letter-spacing: 1px;
@@ -805,7 +785,7 @@ body {
 .pr-badge {
   display: inline-block;
   background: var(--accent);
-  color: #faf7ee;
+  color: var(--surface);
   font-family: 'DM Mono', monospace;
   font-size: 9px;
   font-weight: 500;
@@ -1004,7 +984,7 @@ body {
   height: 40px;
   border-radius: 50%;
   background: var(--accent);
-  color: #faf7ee;
+  color: var(--surface);
   font-family: 'Bebas Neue', sans-serif;
   font-size: 20px;
   display: flex;
@@ -1059,7 +1039,7 @@ body {
 
 .auth-signout-btn:hover {
   background: var(--danger) !important;
-  color: #faf7ee !important;
+  color: var(--surface) !important;
 }
 
 ::-webkit-scrollbar {

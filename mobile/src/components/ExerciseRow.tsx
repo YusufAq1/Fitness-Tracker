@@ -7,8 +7,6 @@ import ContextMenu from './ContextMenu';
 
 interface ExerciseRowProps {
   exercise: Exercise;
-  dayId: string;
-  dayName: string;
   onPress: () => void;
   onRename: () => void;
   onDelete: () => void;

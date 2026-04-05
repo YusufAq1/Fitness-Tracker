@@ -240,7 +240,6 @@ export function updateAuthUI() {
     renderAccountSection();
   } else {
     if (authView) authView.style.display = 'block';
-    renderAuthView();
     renderAccountSection();
   }
 }

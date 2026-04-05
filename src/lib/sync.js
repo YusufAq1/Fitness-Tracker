@@ -5,10 +5,6 @@ import { showToast } from '../ui/toast.js';
 
 let syncing = false;
 
-/**
- * Pull data from Supabase and merge into local state.
- * Called on login and periodically.
- */
 export async function pullFromCloud() {
   if (!isLoggedIn() || syncing) return;
   syncing = true;
@@ -21,7 +17,6 @@ export async function pullFromCloud() {
       return;
     }
 
-    // If cloud has data, use it as the source of truth
     if (cloudTemplates.length > 0 || cloudLogs.length > 0) {
       const days = cloudTemplates.map((t) => ({
         id: t.id,
@@ -47,21 +42,12 @@ export async function pullFromCloud() {
   }
 }
 
-/**
- * Full two-way sync: push local data up, then pull cloud data down.
- * Used by the "SYNC NOW" button.
- */
 export async function fullSync() {
   if (!isLoggedIn() || syncing) return;
-  // Pull first so cloud data replaces local defaults
   await pullFromCloud();
-  // Then push any local data back to cloud
   await pushAllToCloud();
 }
 
-/**
- * Push a single template change to the cloud.
- */
 export async function pushTemplate(day) {
   if (!isLoggedIn()) return;
   try {
@@ -75,9 +61,6 @@ export async function pushTemplate(day) {
   }
 }
 
-/**
- * Push a single log to the cloud.
- */
 export async function pushLog(log) {
   if (!isLoggedIn()) return;
   try {
@@ -87,9 +70,6 @@ export async function pushLog(log) {
   }
 }
 
-/**
- * Delete a template from the cloud.
- */
 export async function removeTemplate(templateId) {
   if (!isLoggedIn()) return;
   try {
@@ -99,9 +79,6 @@ export async function removeTemplate(templateId) {
   }
 }
 
-/**
- * Delete a log from the cloud.
- */
 export async function removeLog(logId) {
   if (!isLoggedIn()) return;
   try {
@@ -111,15 +88,11 @@ export async function removeLog(logId) {
   }
 }
 
-/**
- * Upload all local data to the cloud (for first-time migration).
- */
 export async function pushAllToCloud() {
   if (!isLoggedIn()) return;
   syncing = true;
 
   try {
-    // Push all templates
     for (let i = 0; i < data.days.length; i++) {
       const day = data.days[i];
       await upsertTemplate({
@@ -130,7 +103,6 @@ export async function pushAllToCloud() {
       });
     }
 
-    // Push all logs
     for (const log of data.logs) {
       await upsertLog(log);
     }

@@ -1,10 +1,11 @@
 import { Drawer } from 'expo-router/drawer';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { colors } from '../../src/constants/theme';
 
 const DRAWER_COLORS = {
-  active: '#6c584c',
-  inactive: '#a98467',
-  bg: '#f0ead2',
+  active: colors.accent,
+  inactive: colors.muted,
+  bg: colors.bg,
   activeBg: 'rgba(108, 88, 76, 0.12)',
 };
 
