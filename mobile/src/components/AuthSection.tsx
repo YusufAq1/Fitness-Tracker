@@ -39,13 +39,14 @@ export default function AuthSection() {
     initAuth();
     const unsubscribe = onAuthChange(async (user) => {
       setLoggedIn(isLoggedIn());
-      // Auto-sync whenever user logs in or session is restored
       if (user) {
         try {
           await fullSync();
         } catch (_e) {
           // silent — manual sync still available
         }
+      } else {
+        useStore.getState().resetToDefaults();
       }
     });
     return unsubscribe;
