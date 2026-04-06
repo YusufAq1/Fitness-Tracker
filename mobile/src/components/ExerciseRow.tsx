@@ -1,9 +1,8 @@
-import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { colors, fonts, spacing } from '../constants/theme';
 import type { Exercise } from '../types';
 import { useLastLog } from '../hooks/useLastLog';
-import ContextMenu from './ContextMenu';
+import SwipeableRow from './SwipeableRow';
 
 interface ExerciseRowProps {
   exercise: Exercise;
@@ -19,35 +18,24 @@ export default function ExerciseRow({
   onDelete,
 }: ExerciseRowProps) {
   const lastLog = useLastLog(exercise.id);
-  const [menuVisible, setMenuVisible] = useState(false);
 
   const lastSummary = lastLog
     ? lastLog.sets.map((s) => `${s.kg}${s.unit} \u00D7 ${s.reps}`).join('  ')
     : null;
 
   return (
-    <Pressable
-      onPress={onPress}
-      onLongPress={() => setMenuVisible(true)}
-      delayLongPress={500}
-      style={({ pressed }) => [styles.row, pressed && styles.pressed]}
-    >
-      <View style={styles.info}>
-        <Text style={styles.name}>{exercise.name}</Text>
-        {lastSummary && <Text style={styles.last}>{lastSummary}</Text>}
-      </View>
-      <Text style={styles.arrow}>{'\u203A'}</Text>
-
-      <ContextMenu
-        visible={menuVisible}
-        title={exercise.name}
-        options={[
-          { label: 'Rename', onPress: onRename },
-          { label: 'Delete', onPress: onDelete, destructive: true },
-        ]}
-        onClose={() => setMenuVisible(false)}
-      />
-    </Pressable>
+    <SwipeableRow onEdit={onRename} onDelete={onDelete} editLabel="Rename">
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [styles.row, pressed && styles.pressed]}
+      >
+        <View style={styles.info}>
+          <Text style={styles.name}>{exercise.name}</Text>
+          {lastSummary && <Text style={styles.last}>{lastSummary}</Text>}
+        </View>
+        <Text style={styles.arrow}>{'\u203A'}</Text>
+      </Pressable>
+    </SwipeableRow>
   );
 }
 
@@ -59,6 +47,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderTopWidth: 1,
     borderTopColor: colors.border,
+    backgroundColor: colors.surface,
   },
   pressed: {
     opacity: 0.7,

@@ -4,7 +4,7 @@ import { colors, fonts, radii, spacing } from '../constants/theme';
 import type { Day } from '../types';
 import ExerciseRow from './ExerciseRow';
 import Button from './Button';
-import ContextMenu from './ContextMenu';
+import SwipeableRow from './SwipeableRow';
 
 interface DayCardProps {
   day: Day;
@@ -26,24 +26,27 @@ export default function DayCard({
   onExercisePress,
 }: DayCardProps) {
   const [expanded, setExpanded] = useState(false);
-  const [menuVisible, setMenuVisible] = useState(false);
 
   return (
     <View style={styles.card}>
-      <Pressable
-        onPress={() => setExpanded(!expanded)}
-        onLongPress={() => setMenuVisible(true)}
-        delayLongPress={500}
-        style={styles.header}
+      <SwipeableRow
+        onEdit={() => onRenameDay(day.id, day.name)}
+        onDelete={() => onDeleteDay(day.id)}
+        editLabel="Rename"
       >
-        <View>
-          <Text style={styles.name}>{day.name}</Text>
-          <Text style={styles.count}>
-            {day.exercises.length} EXERCISE{day.exercises.length !== 1 ? 'S' : ''}
-          </Text>
-        </View>
-        <Text style={styles.chevron}>{expanded ? '\u25B4' : '\u25BE'}</Text>
-      </Pressable>
+        <Pressable
+          onPress={() => setExpanded(!expanded)}
+          style={styles.header}
+        >
+          <View>
+            <Text style={styles.name}>{day.name}</Text>
+            <Text style={styles.count}>
+              {day.exercises.length} EXERCISE{day.exercises.length !== 1 ? 'S' : ''}
+            </Text>
+          </View>
+          <Text style={styles.chevron}>{expanded ? '\u25B4' : '\u25BE'}</Text>
+        </Pressable>
+      </SwipeableRow>
 
       {expanded && (
         <View style={styles.body}>
@@ -64,16 +67,6 @@ export default function DayCard({
           />
         </View>
       )}
-
-      <ContextMenu
-        visible={menuVisible}
-        title={day.name}
-        options={[
-          { label: 'Rename', onPress: () => onRenameDay(day.id, day.name) },
-          { label: 'Delete', onPress: () => onDeleteDay(day.id), destructive: true },
-        ]}
-        onClose={() => setMenuVisible(false)}
-      />
     </View>
   );
 }
@@ -92,6 +85,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: spacing.lg,
+    backgroundColor: colors.surface,
   },
   name: {
     fontFamily: fonts.display,
