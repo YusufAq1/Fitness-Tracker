@@ -27,7 +27,6 @@ export default function AuthSection() {
   const [authView, setAuthView] = useState<AuthView>('login');
   const [loggedIn, setLoggedIn] = useState(isLoggedIn());
   const [loading, setLoading] = useState(false);
-  const [syncing, setSyncing] = useState(false);
 
   // Form fields
   const [email, setEmail] = useState('');
@@ -117,18 +116,6 @@ export default function AuthSection() {
     }
   }
 
-  async function handleSync() {
-    setSyncing(true);
-    try {
-      await fullSync();
-      showToast('Synced');
-    } catch (_err) {
-      showToast('Sync failed');
-    } finally {
-      setSyncing(false);
-    }
-  }
-
   if (!isSupabaseConfigured()) {
     return (
       <View style={styles.section}>
@@ -161,13 +148,6 @@ export default function AuthSection() {
             </View>
           </View>
         </View>
-        <Button
-          title={syncing ? 'Syncing...' : '\u21BB Sync Now'}
-          variant="secondary"
-          onPress={handleSync}
-          disabled={syncing}
-          style={styles.actionBtn}
-        />
         <Button
           title="Sign Out"
           variant="outline"
@@ -216,6 +196,7 @@ export default function AuthSection() {
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
+              autoCapitalize="none"
               style={[styles.input, styles.passwordInput]}
             />
             <Pressable
