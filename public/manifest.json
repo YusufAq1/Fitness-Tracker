@@ -4,8 +4,8 @@
   "description": "Progressive overload workout tracker",
   "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#f0ead2",
-  "theme_color": "#6c584c",
+  "background_color": "#1a1a2e",
+  "theme_color": "#1a1a2e",
   "orientation": "portrait",
   "icons": [
     {

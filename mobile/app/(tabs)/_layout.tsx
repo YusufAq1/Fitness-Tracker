@@ -6,7 +6,7 @@ const DRAWER_COLORS = {
   active: colors.accent,
   inactive: colors.muted,
   bg: colors.bg,
-  activeBg: 'rgba(108, 88, 76, 0.12)',
+  activeBg: 'rgba(204, 164, 59, 0.12)',
 };
 
 export default function DrawerLayout() {

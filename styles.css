@@ -1,16 +1,16 @@
 :root {
-  --bg: #f0ead2;
-  --surface: #faf7ee;
-  --surface2: #dde5b6;
-  --border: #c8c0a8;
-  --accent: #6c584c;
-  --accent-dim: #5a4a3e;
-  --text: #3a3028;
-  --muted: #a98467;
-  --danger: #c45040;
-  --up: #6c584c;
-  --down: #c45040;
-  --logo-filter: invert(33%) sepia(12%) saturate(1000%) hue-rotate(340deg) brightness(95%) contrast(88%);
+  --bg: #1a1a2e;
+  --surface: #242F40;
+  --surface2: #2d3a4f;
+  --border: #3d4a5c;
+  --accent: #CCA43B;
+  --accent-dim: #b8922f;
+  --text: #E5E5E5;
+  --muted: #8a8fa3;
+  --danger: #e05555;
+  --up: #CCA43B;
+  --down: #e05555;
+  --logo-filter: invert(70%) sepia(60%) saturate(500%) hue-rotate(5deg) brightness(90%) contrast(95%);
 }
 
 * {
@@ -397,7 +397,7 @@ body {
   background: var(--accent);
   border: none;
   border-radius: 10px;
-  color: var(--surface);
+  color: #ffffff;
   font-family: 'Bebas Neue', sans-serif;
   font-size: 20px;
   letter-spacing: 3px;
@@ -457,7 +457,7 @@ body {
 .filter-chip.active {
   background: var(--accent);
   border-color: var(--accent);
-  color: var(--surface);
+  color: #ffffff;
 }
 
 .history-entry {
@@ -615,7 +615,7 @@ body {
   background: var(--accent);
   border: none;
   border-radius: 8px;
-  color: var(--surface);
+  color: #ffffff;
   font-family: 'Bebas Neue', sans-serif;
   font-size: 18px;
   letter-spacing: 2px;
@@ -659,7 +659,7 @@ body {
 
 .unit-btn.active {
   background: var(--accent);
-  color: var(--surface);
+  color: #ffffff;
 }
 
 /* DATA MANAGEMENT */
@@ -723,7 +723,7 @@ body {
   left: 50%;
   transform: translateX(-50%) translateY(80px);
   background: var(--accent);
-  color: var(--surface);
+  color: #ffffff;
   font-family: 'DM Mono', monospace;
   font-size: 12px;
   letter-spacing: 1px;
@@ -785,7 +785,7 @@ body {
 .pr-badge {
   display: inline-block;
   background: var(--accent);
-  color: var(--surface);
+  color: #ffffff;
   font-family: 'DM Mono', monospace;
   font-size: 9px;
   font-weight: 500;
@@ -984,7 +984,7 @@ body {
   height: 40px;
   border-radius: 50%;
   background: var(--accent);
-  color: var(--surface);
+  color: #ffffff;
   font-family: 'Bebas Neue', sans-serif;
   font-size: 20px;
   display: flex;
@@ -1039,7 +1039,7 @@ body {
 
 .auth-signout-btn:hover {
   background: var(--danger) !important;
-  color: var(--surface) !important;
+  color: #ffffff !important;
 }
 
 ::-webkit-scrollbar {

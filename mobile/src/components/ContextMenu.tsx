@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     borderTopColor: colors.border,
   },
   optionPressed: {
-    backgroundColor: 'rgba(108, 88, 76, 0.08)',
+    backgroundColor: 'rgba(204, 164, 59, 0.08)',
   },
   optionText: {
     fontFamily: fonts.monoMedium,
