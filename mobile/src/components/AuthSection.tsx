@@ -367,12 +367,15 @@ const styles = StyleSheet.create({
   },
   eyeBtn: {
     position: 'absolute',
-    right: 0,
-    top: 0,
-    bottom: 0,
+    right: 1,
+    top: 1,
+    bottom: 1,
     width: 48,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderTopRightRadius: radii.sm,
+    borderBottomRightRadius: radii.sm,
   },
   submitBtn: {
     marginTop: spacing.sm,
