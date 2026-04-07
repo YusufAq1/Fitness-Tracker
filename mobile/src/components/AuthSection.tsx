@@ -197,6 +197,8 @@ export default function AuthSection() {
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
               autoCapitalize="none"
+              autoCorrect={false}
+              textContentType="oneTimeCode"
               style={[styles.input, styles.passwordInput]}
             />
             <Pressable
